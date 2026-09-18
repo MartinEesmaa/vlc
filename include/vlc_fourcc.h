@@ -187,6 +187,7 @@
 #define VLC_CODEC_SPEEDHQ         VLC_FOURCC('S','H','Q','2')
 #define VLC_CODEC_PIXLET          VLC_FOURCC('p','x','l','t')
 #define VLC_CODEC_APV             VLC_FOURCC('a','p','v','1')
+#define VLC_CODEC_VVC             VLC_FOURCC('v','v','c','1')
 
 /***********
  * Chromas
