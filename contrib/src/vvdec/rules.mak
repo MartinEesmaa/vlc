@@ -13,8 +13,11 @@ vvdec: vvdec-$(VVDEC_VERSION).tar.gz .sum-vvdec
 	$(UNPACK)
 	$(MOVE)
 
+VVDEC_CONF := -DVVDEC_ENABLE_LINK_TIME_OPT=OFF
+
 .vvdec: vvdec toolchain.cmake
 	$(CMAKECLEAN)
-	$(HOSTVARS) $(CMAKE) -DVVDEC_ENABLE_LINK_TIME_OPT=OFF
-	$(CMAKEBUILD) . --target install
+	$(HOSTVARS) $(CMAKE) $(VVDEC_CONF)
+	+$(CMAKEBUILD)
+	$(CMAKEINSTALL)
 	touch $@
