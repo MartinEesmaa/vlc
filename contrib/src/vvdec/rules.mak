@@ -1,0 +1,20 @@
+# VVdeC Library
+# Makefile by Martin Eesmaa (2026)
+
+VVDEC_VERSION := 3.2.0
+VVDEC_URL := $(GITHUB)/fraunhoferhhi/vvdec/archive/v$(VVDEC_VERSION).tar.gz
+
+$(TARBALLS)/vvdec-$(VVDEC_VERSION).tar.gz:
+	$(call download_pkg,$(VVDEC_URL),vvdec)
+
+.sum-vvdec: $(TARBALLS)/vvdec-$(VVDEC_VERSION).tar.gz
+
+vvdec: vvdec-$(VVDEC_VERSION).tar.gz .sum-vvdec
+	$(UNPACK)
+	$(MOVE)
+
+.vvdec: vvdec toolchain.cmake
+	cd $< && rm -f CMakeCache.txt
+	cd $< && $(HOSTVARS) $(CMAKE) -DVVDEC_ENABLE_LINK_TIME_OPT=OFF
+	cd $< && $(CMAKEBUILD) . --target install
+	touch $@

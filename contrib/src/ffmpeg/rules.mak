@@ -33,6 +33,7 @@ FFMPEGCONF = --prefix="$(PREFIX)" --enable-static --disable-shared \
 	--disable-encoder=vorbis \
 	--disable-decoder=opus \
 	--enable-libgsm \
+	--enable-libvvdec \
 	--disable-debug \
 	--disable-avdevice \
 	--disable-devices \
@@ -61,7 +62,7 @@ ifdef ENABLE_PDB
 FFMPEGCONF += --ln_s=false
 endif
 
-DEPS_ffmpeg = zlib $(DEPS_zlib) gsm $(DEPS_gsm)
+DEPS_ffmpeg = zlib $(DEPS_zlib) gsm $(DEPS_gsm) vvdec $(DEPS_vvdec)
 
 ifndef USE_LIBAV
 FFMPEGCONF += \
@@ -260,6 +261,7 @@ ifdef USE_FFMPEG
 	$(APPLY) $(SRC)/ffmpeg/0001-bring-back-XP-support.patch
 	$(APPLY) $(SRC)/ffmpeg/0011-avcodec-videotoolboxenc-disable-calls-on-unsupported.patch
 	$(APPLY) $(SRC)/ffmpeg/avcodec-fix-compilation-visionos.patch
+	$(APPLY) $(SRC)/ffmpeg/libvvdec.patch
 endif
 ifdef USE_LIBAV
 	$(APPLY) $(SRC)/ffmpeg/libav_gsm.patch
