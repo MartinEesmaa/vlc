@@ -72,7 +72,10 @@
  * Remaining text is a required description of the update
  */
 
-#if defined( _WIN64 )
+
+#if defined( _WIN32 ) && ( defined( __aarch64__ ) || defined( _M_ARM64 ) )
+# define UPDATE_OS_SUFFIX "-win-arm64"
+#elif defined( _WIN64 )
 # define UPDATE_OS_SUFFIX "-win-x64"
 #elif defined( _WIN32 )
 # define UPDATE_OS_SUFFIX "-win-x86"
@@ -81,8 +84,8 @@
 #endif
 
 #ifndef NDEBUG
-# define UPDATE_VLC_STATUS_URL "http://update-test.videolan.org/vlc/status-win-x86"
-# define UPDATE_VLC_STATUS_SURL "https://update-test.videolan.org/vlc/status-win-x86"
+# define UPDATE_VLC_STATUS_URL "http://update-test.videolan.org/vlc/status" UPDATE_OS_SUFFIX
+# define UPDATE_VLC_STATUS_SURL "https://update-test.videolan.org/vlc/status" UPDATE_OS_SUFFIX
 #else
 # define UPDATE_VLC_STATUS_URL "http://update.videolan.org/vlc/status" UPDATE_OS_SUFFIX
 # define UPDATE_VLC_STATUS_SURL "https://update.videolan.org/vlc/status" UPDATE_OS_SUFFIX

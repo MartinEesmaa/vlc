@@ -2,12 +2,12 @@ dnl Autoconf settings for vlc
 
 AC_COPYRIGHT([Copyright 1999-2025 VLC authors and VideoLAN])
 
-AC_INIT(vlc, 3.0.24-beta1)
+AC_INIT(vlc, 3.0.25)
 VERSION_MAJOR=3
 VERSION_MINOR=0
-VERSION_REVISION=24
+VERSION_REVISION=25
 VERSION_EXTRA=0
-VERSION_DEV=beta1
+VERSION_DEV=
 
 VERSION_DATE=$(
     VERSION_PATTERN='^v?([[0-9]]+\.?)+(-[[0-9]]+)?$'
@@ -2251,19 +2251,23 @@ AM_CONDITIONAL(HAVE_AVFOUNDATION, [test "${have_avfoundation}" != "no"])
 dnl
 dnl  DCP plugin (using asdcplib)
 dnl
-PKG_WITH_MODULES([ASDCP], [asdcplib], [
-    have_asdcp="yes"
-
-    dnl asdcplib doesn't provide a version define
+ASDCPLIB_FACTORY=0
+PKG_WITH_MODULES([ASDCP], [asdcplib])
+AS_IF([test "${enable_asdcp}" = "yes"],[
+    dnl asdcplib does not provide a version define
     dnl check the factory necessary API from the package version
-    PKG_WITH_MODULES([ASDCP], [asdcplib >= 2.12.2], [
+    AC_MSG_CHECKING([asdcplib API version])
+    ($PKG_CONFIG --print-errors "asdcplib >= 2.12.2") 2>&1
+    ac_status=$?
+    AS_IF([test $ac_status = 0],[
         ASDCPLIB_FACTORY=1
+        AC_MSG_RESULT([2.12.2 API])
     ],[
-        ASDCPLIB_FACTORY=0
+        AC_MSG_RESULT([old API])
     ])
 ])
 AC_SUBST([ASDCPLIB_FACTORY])
-AM_CONDITIONAL(HAVE_ASDCP, [test "${have_asdcp}" = "yes"])
+AM_CONDITIONAL(HAVE_ASDCP, [test "${enable_asdcp}" = "yes"])
 
 dnl
 dnl  Demux plugins
@@ -2955,7 +2959,7 @@ PKG_ENABLE_MODULES_VLC([DAALA], [], [daaladec daalaenc], [experimental daala cod
 dnl
 dnl  OpenAPV decoder plugin
 dnl
-PKG_ENABLE_MODULES_VLC([OPENAPV], [], [oapv >= 0.2], [OpenAPV decoder], [auto])
+PKG_ENABLE_MODULES_VLC([OPENAPV], [], [oapv >= 0.3], [OpenAPV decoder], [disabled])
 
 dnl
 dnl  PNG decoder module
@@ -4288,7 +4292,7 @@ PKG_ENABLE_MODULES_VLC([SRT], [access_srt access_output_srt], [srt >= 1.3.0], [S
 dnl
 dnl  libRIST plugin
 dnl
-PKG_ENABLE_MODULES_VLC([LIBRIST], [rist access_output_rist], [librist], [RIST input/output plugin], [auto])
+PKG_ENABLE_MODULES_VLC([LIBRIST], [rist access_output_rist], [librist >= 0.2.1], [RIST input/output plugin], [auto])
 
 EXTEND_HELP_STRING([Visualisations and Video filter plugins:])
 dnl
