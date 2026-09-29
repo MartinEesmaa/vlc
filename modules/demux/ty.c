@@ -704,7 +704,8 @@ static int DemuxRecVideo( demux_t *p_demux, ty_rec_hdr_t *rec_hdr, block_t *p_bl
          * Do NOT Pass the PES Header to the MPEG2 codec */
         size_t search_len = __MIN(p_block_in->i_buffer - sizeof(ty_VideoPacket), 5);
         esOffset1 = find_es_header( ty_VideoPacket, p_block_in->p_buffer, p_block_in->i_buffer, search_len );
-        if( esOffset1 != -1 )
+        if( esOffset1 != -1 &&
+            (size_t)esOffset1 + VIDEO_PTS_OFFSET + 5 <= p_block_in->i_buffer ) // to read the PTS
         {
             //msg_Dbg(p_demux, "Video PES hdr in pkt type 0x%02x at offset %d",
                 //subrec_type, esOffset1);
@@ -1670,7 +1671,8 @@ static int parse_master(demux_t *p_demux)
     uint32_t i_map_size = U32_AT(&mst_buf[20]);  /* size of bitmask, in bytes */
     uint32_t i = U32_AT(&mst_buf[28]);   /* size of SEQ table, in bytes */
 
-    if( i_save_pos + 32 + i > p_sys->i_stream_size )
+    /* Check seek index size, if any */
+    if( p_sys->i_stream_size && (i_save_pos + 32 + i > p_sys->i_stream_size) )
         return VLC_EGENERIC;
 
     if(i_map_size > UINT32_MAX / 8)

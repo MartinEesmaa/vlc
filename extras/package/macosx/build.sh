@@ -300,6 +300,12 @@ unset EXTRA_CFLAGS
 unset EXTRA_LDFLAGS
 unset XCODE_FLAGS
 
+TOOLCHAIN_FLAGS="-isysroot ${SDKROOT} -mmacosx-version-min=${MINIMAL_OSX_VERSION}"
+export CC="${CC} ${TOOLCHAIN_FLAGS}"
+export CXX="${CXX} ${TOOLCHAIN_FLAGS} -stdlib=libc++ -std=c++11"
+export OBJC="${OBJC} ${TOOLCHAIN_FLAGS}"
+export OBJCXX="${OBJCXX} ${TOOLCHAIN_FLAGS} -stdlib=libc++ -std=c++11"
+
 # Enable debug symbols by default
 export CFLAGS="-g -arch $ACTUAL_ARCH"
 export CXXFLAGS="-g -arch $ACTUAL_ARCH"
@@ -363,11 +369,6 @@ make -j$JOBS
 
 info "Preparing VLC.app"
 make VLC.app
-
-# Workaround for macOS 10.7: CFNetwork only exists as part of CoreServices framework
-if [ "$ARCH" = "x86_64" ]; then
-    install_name_tool -change /System/Library/Frameworks/CFNetwork.framework/Versions/A/CFNetwork /System/Library/Frameworks/CoreServices.framework/Versions/A/CoreServices VLC.app/Contents/MacOS/lib/libvlccore.dylib
-fi
 
 if [ "$PACKAGETYPE" = "u" ]; then
     info "Copying app with debug symbols into VLC-debug.app and stripping"

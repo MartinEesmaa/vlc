@@ -2658,6 +2658,9 @@ error:
     return NULL;
 }
 
+static void input_SplitMRL( const char **, const char **, const char **,
+                            const char **, char * );
+
 /*****************************************************************************
  * InputSourceNew:
  *****************************************************************************/
@@ -2672,7 +2675,7 @@ static input_source_t *InputSourceNew( input_thread_t *p_input,
     if( unlikely(in == NULL) )
         return NULL;
 
-    const char *psz_access, *psz_demux, *psz_path, *psz_anchor = NULL;
+    const char *psz_access, *psz_demux, *psz_path, *psz_anchor;
 
     assert( psz_mrl );
     char *psz_dup = strdup( psz_mrl );
@@ -3271,10 +3274,11 @@ static void input_ChangeState( input_thread_t *p_input, int i_state )
  * MRLSplit: parse the access, demux and url part of the
  *           Media Resource Locator.
  *****************************************************************************/
-void input_SplitMRL( const char **access, const char **demux,
-                     const char **path, const char **anchor, char *buf )
+static void input_SplitMRL( const char **access, const char **demux,
+                            const char **path, const char **anchor, char *buf )
 {
     char *p;
+    *anchor = "";
 
     /* Separate <path> from <access>[/<demux>]:// */
     p = strstr( buf, "://" );
@@ -3292,8 +3296,6 @@ void input_SplitMRL( const char **access, const char **demux,
             *(p++) = '\0';
             *anchor = p;
         }
-        else
-            *anchor = "";
     }
     else
     {

@@ -1178,7 +1178,7 @@ success:
 static int subtitle_ParseSubRipTiming( subtitle_t *p_subtitle,
                                        const char *s )
 {
-    const char *delimiter = strstr(s, " --> ");
+    const char *delimiter = strstr(s, "-->");
     if (delimiter == NULL || delimiter == s)
         return VLC_EGENERIC;
 
@@ -1186,7 +1186,7 @@ static int subtitle_ParseSubRipTiming( subtitle_t *p_subtitle,
     if (ret != VLC_SUCCESS)
         return ret;
 
-    const char *right = delimiter + strlen(" --> ");
+    const char *right = delimiter + strlen("-->");
     return subtitle_ParseSubRipTimingValue(&p_subtitle->i_stop, right, strlen(right));
 }
 
@@ -1211,7 +1211,7 @@ static int subtitle_ParseSubViewerTiming( subtitle_t *p_subtitle,
     int h1, m1, s1, d1, h2, m2, s2, d2;
 
     if( sscanf( s, "%d:%d:%d.%d,%d:%d:%d.%d",
-                &h1, &m1, &s1, &d1, &h2, &m2, &s2, &d2) == 8 )
+                &h1, &m1, &s1, &d1, &h2, &m2, &s2, &d2) != 8 )
         return VLC_EGENERIC;
 
     p_subtitle->i_start = vlc_tick_from_HMS( h1, m1, s1 ) +
